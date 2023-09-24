@@ -101,11 +101,12 @@ int main() {
         lastFrameTime = static_cast<float>(glfwGetTime());
 
         int width, height;
+        glfwGetFramebufferSize(window, &width, &height);
+        glViewport(0, 0, width, height);
         glfwGetWindowSize(window, &width, &height);
+
         proj = glm::perspective(glm::radians(45.0f), static_cast<float>(width) / static_cast<float>(height), 0.1f, 100.0f);
         prismModel = glm::rotate(prismModel, glm::radians(45.0f) * deltaTime, glm::vec3(0.0f, 1.0f, 0.0f));
-
-        glViewport(0, 0, width, height);
 
         handleInput(window, &view, deltaTime);
 

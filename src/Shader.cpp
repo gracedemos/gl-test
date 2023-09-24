@@ -7,6 +7,8 @@
 
 #ifdef linux
 #include <unistd.h>
+#elif __APPLE__
+#include <mach-o/dyld.h>
 #endif
 
 #include "Shader.h"
@@ -64,7 +66,17 @@ void Shader::uniformVec3(const char *name, const float *data) const {
 std::string Shader::getShaderPath(const char *shader) {
     std::string path;
     path.resize(255);
+#ifdef linux
     size_t size = readlink("/proc/self/exe", path.data(), 255);
+#elif __APPLE__
+    uint32_t size = PATH_MAX;
+    _NSGetExecutablePath(path.data(), &size);
+    for (int i = 0; i < size; i++) {
+        if (path[i] == '\x00') {
+            size = i;
+        }
+    }
+#endif
     path.resize(size);
     path.erase(size - 25, 25);
     path += "shaders/";
