@@ -13,13 +13,15 @@ private:
     GLuint id;
 
 public:
-    Shader(const char* vertPath, const char* fragPath);
+    Shader(std::string &vertPath, std::string &fragPath);
     void use() const;
     void uniformMat4(const char* name, const float* data) const;
     void uniformVec3(const char* name, const float* data) const;
 
+    static std::string getShaderPath(const char* shader);
+
 private:
-    static char* readShaderSource(const char* path);
+    static const char * readShaderSource(const char* path);
 };
 
 #endif //GL_TEST_SHADER_H

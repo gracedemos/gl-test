@@ -5,11 +5,15 @@
 #include <fstream>
 #include <iostream>
 
+#ifdef linux
+#include <unistd.h>
+#endif
+
 #include "Shader.h"
 
-Shader::Shader(const char *vertPath, const char *fragPath) {
-    char* vertSource = readShaderSource(vertPath);
-    char* fragSource = readShaderSource(fragPath);
+Shader::Shader(std::string &vertPath, std::string &fragPath) {
+    const char* vertSource = readShaderSource(vertPath.c_str());
+    const char* fragSource = readShaderSource(fragPath.c_str());
     GLuint vertShader = glCreateShader(GL_VERTEX_SHADER);
     GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
 
@@ -25,19 +29,20 @@ Shader::Shader(const char *vertPath, const char *fragPath) {
 
     glDeleteShader(vertShader);
     glDeleteShader(fragShader);
-    delete vertSource;
-    delete fragSource;
+    delete[] vertSource;
+    delete[] fragSource;
 }
 
-char* Shader::readShaderSource(const char *path) {
+const char * Shader::readShaderSource(const char *path) {
     std::ifstream file(path, std::ios::binary | std::ios::in);
     file.seekg(0, std::ios::end);
     std::streamsize size = file.tellg();
     file.seekg(0, std::ios::beg);
 
-    char* source = new char[size];
+    char* source = new char[size + 1];
     file.read(source, size);
     file.close();
+    source[size] = '\x00';
 
     return source;
 }
@@ -54,4 +59,15 @@ void Shader::uniformMat4(const char *name, const float *data) const {
 void Shader::uniformVec3(const char *name, const float *data) const {
     GLint location = glGetUniformLocation(id, name);
     glUniform3fv(location, 1, data);
+}
+
+std::string Shader::getShaderPath(const char *shader) {
+    std::string path;
+    path.resize(255);
+    size_t size = readlink("/proc/self/exe", path.data(), 255);
+    path.resize(size);
+    path.erase(size - 25, 25);
+    path += "shaders/";
+    path += shader;
+    return path;
 }

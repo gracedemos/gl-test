@@ -34,6 +34,8 @@ int main() {
     glfwSwapInterval(0);
     gladLoadGL();
 
+    const uint8_t* deviceName = glGetString(GL_RENDERER);
+
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
@@ -67,7 +69,9 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    Shader defaultShader("/Users/gracedemos/code/gl-test/shaders/default.vert", "/Users/gracedemos/code/gl-test/shaders/default.frag");
+    std::string defaultVert = Shader::getShaderPath("default.vert");
+    std::string defaultFrag = Shader::getShaderPath("default.frag");
+    Shader defaultShader(defaultVert, defaultFrag);
 
     float clearColor[] = {
             0.1f, 0.1f, 0.1f, 1.0f
@@ -100,6 +104,8 @@ int main() {
         glfwGetWindowSize(window, &width, &height);
         proj = glm::perspective(glm::radians(45.0f), static_cast<float>(width) / static_cast<float>(height), 0.1f, 100.0f);
         prismModel = glm::rotate(prismModel, glm::radians(45.0f) * deltaTime, glm::vec3(0.0f, 1.0f, 0.0f));
+
+        glViewport(0, 0, width, height);
 
         handleInput(window, &view, deltaTime);
 
@@ -134,8 +140,9 @@ int main() {
         ImGui::NewFrame();
 
         ImGui::SetNextWindowPos(ImVec2(10, 10));
-        ImGui::SetNextWindowSize(ImVec2(200, 75));
+        ImGui::SetNextWindowSize(ImVec2(300, 100));
         ImGui::Begin("Info", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+        ImGui::Text("GPU: %s", deviceName);
         ImGui::Text("Delta Time: %f", deltaTime);
         ImGui::Text("FPS: %d", static_cast<int>(1.0f / deltaTime));
         ImGui::End();
