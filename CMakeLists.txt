@@ -2,16 +2,16 @@ cmake_minimum_required(VERSION 3.26)
 project(gl-test)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLFW3 REQUIRED glfw3)
-pkg_check_modules(GLM REQUIRED glm)
 
 include_directories(${CMAKE_SOURCE_DIR}/include
         ${CMAKE_SOURCE_DIR}/imgui
         ${CMAKE_SOURCE_DIR}/imgui/backends
-        ${GLFW3_INCLUDE_DIRS}
-        ${GLM_INCLUDE_DIRS})
+		${CMAKE_SOURCE_DIR}/glm
+        ${GLFW3_INCLUDE_DIRS})
 
 add_executable(gl-test src/main.cpp
         src/glad.c

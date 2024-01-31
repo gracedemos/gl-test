@@ -78,7 +78,7 @@ std::string Shader::getShaderPath(const char *shader) {
     }
 #endif
     path.resize(size);
-    path.erase(size - 25, 25);
+    path.erase(size - 13, 13);
     path += "shaders/";
     path += shader;
     return path;
