@@ -4,5 +4,6 @@ build/
 .idea/
 .cache/
 .DS_Store
+imgui.ini
 
 compile_commands.json
